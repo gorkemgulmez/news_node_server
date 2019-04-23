@@ -8,7 +8,7 @@ var con = mysql.createConnection({
 });
 
 var createDBTable = () => {
-    var createTableQ = "create table if not exists news (id bigint auto_increment primary key, name varchar(150) charset utf8, content varchar(2000) charset utf8, type enum('gundem', 'spor', 'ekonomi', 'dunya'), image_link varchar(250) charset utf8, like_number int, dislike_number int) engine=InnoDB default charset utf8";
+    var createTableQ = "create table if not exists news (id bigint auto_increment primary key, name varchar(150) charset utf8, content varchar(2000) charset utf8, type enum('gundem', 'spor', 'ekonomi', 'dunya'), image_link varchar(250) charset utf8, like_number int, dislike_number int, view_count int) engine=InnoDB default charset utf8";
     con.query(createTableQ, function (err, result) {
         if(err) throw err;
         console.log("Table Created!\n");

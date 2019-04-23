@@ -21,8 +21,8 @@ con.connect(function(err) {
 });
 
 var newEntry = (nName, nContent, nType, nImage_link) => {
-	var sql = "INSERT INTO news (name, content, type, image_link, like_number, dislike_number) VALUES ?";
-	var values = [[nName, nContent, nType, nImage_link, 0, 0]];
+	var sql = "INSERT INTO news (name, content, type, image_link, like_number, dislike_number, view_count) VALUES ?";
+	var values = [[nName, nContent, nType, nImage_link, 0, 0, 0]];
 	con.query(sql, [values], function (err, result) {
 		if (err) throw err;
 		console.log("New Entry Added!\n" + result.affectedRows + " new lines.");
