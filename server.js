@@ -68,18 +68,33 @@ app.get('/api/newslists/:id', (req, res) => {
 
 app.get('/api/newslists/', (req, res) => {
 	con.query("SELECT * FROM news ORDER BY id DESC" , function (err, result, fields) {
-    	if (err) throw err;
-    	res.setHeader('Content-Type', 'application/json');
-    	res.end(JSON.stringify(result));
+	    	if (err) throw err;
+    		res.setHeader('Content-Type', 'application/json');
+    		res.end(JSON.stringify(result));
 	});
 });
 
-
 app.get('/api/10news/:num', (req, res) => {
-    con.query("SELECT * FROM news ORDER BY id DESC LIMIT ?,10", [((parseInt(req.params.num)-1) * 10 )] , function (err, result, fields) {
-        if (err) throw err;
-    	res.setHeader('Content-Type', 'application/json');
-    	res.end(JSON.stringify(result));
+	con.query("SELECT * FROM news ORDER BY id DESC LIMIT ?,10", [((parseInt(req.params.num)-1) * 10 )] , function (err, result, fields) {
+		if (err) throw err;
+		res.setHeader('Content-Type', 'application/json');
+		res.end(JSON.stringify(result));
+	});
+});
+
+app.get('/api/trends/:num', (req, res) => {
+	con.query("SELECT * FROM news ORDER BY view_count DESC LIMIT ?", [parseInt(req.params.num)], function (err, result, fields) {
+		if(err) throw err;
+		res.setHeader('Content-Type', 'application/json');
+		res.end(JSON.stringify(result));
+	});
+});
+
+app.get('/api/10news/:type/:num', (req, res) => {
+	con.query("SELECE * FROM news WHERE type=? ORDER BY id DESC LIMIT ?,10", [req.params.type, ((parseInt(req.params.num)-1) * 10 )] , function (err, result, fields) {
+		if (err) throw err;
+		res.setHeader('Content-Type', 'application/json');
+		res.end(JSON.stringify(result));
 	});
 });
 
@@ -89,6 +104,45 @@ app.post('/postentrysuccess', (req, res) => {
 	    res.writeHead(200, {'Content-type': 'text/html'});
         res.end(html);
     });
+});
+
+app.post('/like', (req, res) => {
+	con.query("SELECT like_number FROM news  WHERE id=?", [parseInt(req.body.id)], function (err, result, fields) {
+		if(err) throw err;
+		var count = 0;
+		Object.keys(result).forEach(function(key) {count = result[key].like_number + 1;});
+		con.query("UPDATE news SET like_number=? WHERE id=?", [count, parseInt(req.body.id)], function(err, result, fields) {
+			if(err) throw err;
+			console.log("log number: " + count);
+			res.end();
+		});
+	});
+});
+
+app.post('/dislike', (req, res) => {
+	con.query("SELECT dislike_number FROM news  WHERE id=?", [parseInt(req.body.id)], function (err, result, fields) {
+		if(err) throw err;
+		var count = 0;
+		Object.keys(result).forEach(function(key) {count = result[key].dislike_number + 1;});
+		con.query("UPDATE news SET dislike_number=? WHERE id=?", [count, parseInt(req.body.id)], function(err, result, fields) {
+			if(err) throw err;
+			console.log("log number: " + count);
+			res.end();
+		});
+	});
+});
+
+app.post('/view', (req, res) => {
+	con.query("SELECT view_count FROM news  WHERE id=?", [parseInt(req.body.id)], function (err, result, fields) {
+		if(err) throw err;
+		var count = 0;
+		Object.keys(result).forEach(function(key) {count = result[key].view_count + 1;});
+		con.query("UPDATE news SET view_count=? WHERE id=?", [count, parseInt(req.body.id)], function(err, result, fields) {
+			if(err) throw err;
+			console.log("log number: " + count);
+			res.end();
+		});
+	});
 });
 
 var port = process.env.PORT || 8080;
