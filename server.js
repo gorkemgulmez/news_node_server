@@ -20,13 +20,13 @@ con.connect(function(err) {
 	console.log("Sql connection added!");
 });
 
-var newEntry = (nName, nContent, nType, nImage_link) => {
-	var sql = "INSERT INTO news (name, content, type, image_link, like_number, dislike_number, view_count) VALUES ?";
-	var values = [[nName, nContent, nType, nImage_link, 0, 0, 0]];
+var newEntry = (nName, nContent, nType, nImage_link, nDate) => {
+	var sql = "INSERT INTO news (name, content, type, image_link, like_number, dislike_number, view_count, date) VALUES ?";
+	var values = [[nName, nContent, nType, nImage_link, 0, 0, 0, nDate]];
 	con.query(sql, [values], function (err, result) {
 		if (err) throw err;
 		console.log("New Entry Added!\n" + result.affectedRows + " new lines.");
-        console.log("Name: " + nName + " Content: " + nContent + " Type: " + nType + " image link: " + nImage_link); 
+        console.log("Name: " + nName + " Content: " + nContent + " Type: " + nType + " image link: " + nImage_link + " date: " + nDate); 
         console.log([values]);
 	});
 };
@@ -99,7 +99,7 @@ app.get('/api/10news/:type/:num', (req, res) => {
 });
 
 app.post('/postentrysuccess', (req, res) => {
-    newEntry(req.body.nName, req.body.nContent, req.body.nType, req.body.nImageLink);
+    newEntry(req.body.nName, req.body.nContent, req.body.nType, req.body.nImageLink, req.body.nDate);
 	fs.readFile('./views/index.html', (err, html) => {
 	    res.writeHead(200, {'Content-type': 'text/html'});
         res.end(html);
@@ -113,7 +113,6 @@ app.post('/like', (req, res) => {
 		Object.keys(result).forEach(function(key) {count = result[key].like_number + 1;});
 		con.query("UPDATE news SET like_number=? WHERE id=?", [count, parseInt(req.body.id)], function(err, result, fields) {
 			if(err) throw err;
-			console.log("log number: " + count);
 			res.end();
 		});
 	});
@@ -126,7 +125,6 @@ app.post('/dislike', (req, res) => {
 		Object.keys(result).forEach(function(key) {count = result[key].dislike_number + 1;});
 		con.query("UPDATE news SET dislike_number=? WHERE id=?", [count, parseInt(req.body.id)], function(err, result, fields) {
 			if(err) throw err;
-			console.log("log number: " + count);
 			res.end();
 		});
 	});
@@ -139,7 +137,6 @@ app.post('/view', (req, res) => {
 		Object.keys(result).forEach(function(key) {count = result[key].view_count + 1;});
 		con.query("UPDATE news SET view_count=? WHERE id=?", [count, parseInt(req.body.id)], function(err, result, fields) {
 			if(err) throw err;
-			console.log("log number: " + count);
 			res.end();
 		});
 	});
