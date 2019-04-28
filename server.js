@@ -66,7 +66,7 @@ app.get('/api/newslists/:id', (req, res) => {
 	});
 });
 
-app.get('/api/newslists/', (req, res) => {
+app.get('/api/newslists', (req, res) => {
 	con.query("SELECT * FROM news ORDER BY id DESC" , function (err, result, fields) {
 	    	if (err) throw err;
     		res.setHeader('Content-Type', 'application/json');
@@ -91,7 +91,16 @@ app.get('/api/trends/:num', (req, res) => {
 });
 
 app.get('/api/10news/:type/:num', (req, res) => {
-	con.query("SELECE * FROM news WHERE type=? ORDER BY id DESC LIMIT ?,10", [req.params.type, ((parseInt(req.params.num)-1) * 10 )] , function (err, result, fields) {
+	con.query("SELECT * FROM news WHERE type=? ORDER BY id DESC LIMIT ?,10", [req.params.type, ((parseInt(req.params.num)-1) * 10 )] , function (err, result, fields) {
+		if (err) throw err;
+		res.setHeader('Content-Type', 'application/json');
+		res.end(JSON.stringify(result));
+	});
+});
+
+app.get('/api/typelists/:type', (req, res) => {
+	
+	con.query("SELECT * FROM news WHERE type=? ORDER BY id DESC", [req.params.type] , function (err, result, fields) {
 		if (err) throw err;
 		res.setHeader('Content-Type', 'application/json');
 		res.end(JSON.stringify(result));
