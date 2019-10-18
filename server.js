@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 var con = mysql.createConnection({
 	host: "localhost",
 	user: "node_root",
-	password: "KRyI9zIDqQIgFj15",
+	password: "password-string",
 	database: "yazlab"
 });
 
